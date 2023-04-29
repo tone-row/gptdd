@@ -2,13 +2,13 @@
 
 _A single-file, test-driven-development feedback loop with GPT 🌀_
 
+![gptdd demo fast](https://user-images.githubusercontent.com/159949/235314387-8b5b5a10-e0b3-4863-a08c-fdfeb80878f7.gif)
+
 ## How it Works
 
 Given command which runs a test and a file to edit , `gptdd` feeds the test results to GPT4, requests a fix, and offers the user the option to apply the fix.
 
 > 💭 It would be amazing to build this in at the test runner/IDE-level, but in the interest of it being language and test-runner agnostic, it's a standalone script. If you're interested in building an IDE plugin, please reach out!
-
-![gptdd demo fast](https://user-images.githubusercontent.com/159949/235314387-8b5b5a10-e0b3-4863-a08c-fdfeb80878f7.gif)
 
 ## Usage
 
