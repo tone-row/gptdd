@@ -1,0 +1,29 @@
+{
+  "name": "gptdd",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": "src/bin.js",
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.16.1",
+    "nodemon": "^2.0.22",
+    "openai": "^3.2.1",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
+  },
+  "scripts": {
+    "test": "vitest",
+    "start": "node ./examples/test.js",
+    "dev": "nodemon examples/test.mjs"
+  },
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "chokidar": "^3.5.3",
+    "commander": "^10.0.1",
+    "inquirer": "^9.2.0",
+    "minimist": "^1.2.8",
+    "node-fetch": "^3.3.1",
+    "ora": "^6.3.0"
+  }
+}
