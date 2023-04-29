@@ -8,6 +8,11 @@ import ora from "ora";
 import { join } from "path";
 import { promisify } from "util";
 const asyncExec = promisify(exec);
+import { Chalk } from "chalk";
+import { diffChars } from "diff";
+import "colors";
+
+const chalk = new Chalk();
 
 /**
  * Used for watching files.
@@ -51,25 +56,29 @@ async function gptTestFix({ signal, entryOptions }) {
   if (!fileExists) throw new Error("file does not exist");
   const file = readFileSync(fileToFixPath, "utf-8");
 
-  console.log("Found File:\n");
-  console.log(file.split("\n").slice(0, 10).join("\n"));
-  if (file.split("\n").length > 10) console.log("...\n");
+  message("File Contents");
+  console.log("\n");
+  console.log(file.split("\n").slice(0, 5).join("\n").trim());
+  if (file.split("\n").length > 10) console.log("...");
+  console.log("\n");
 
   try {
     //  Run the test command
-    spinner.start(`Running command: ${testToRun}`);
+    spinner.start(
+      chalk.blue(`Running command: ${chalk.bgBlack.green(testToRun)}`)
+    );
     await asyncExec(testToRun).finally(() => spinner.stop());
 
-    console.log("All tests passed!");
+    success("All tests passed!");
   } catch (e) {
     //  If you can't recover from the error, throw it
     if (!e) throw new Error("Unknown Error");
     if (typeof e !== "object") throw e;
     if (!("stderr" in e)) {
       if ("message" in e) {
-        console.error(e.message);
+        error(e.message);
       } else {
-        console.error(e);
+        error(e);
       }
       process.exit(1);
     }
@@ -85,8 +94,10 @@ async function gptTestFix({ signal, entryOptions }) {
     )
       throw e;
 
-    console.log("Test Error:\n");
-    console.log(stderr);
+    message("Test Error");
+    console.log("\n");
+    console.log(stderr.trim());
+    console.log("\n");
 
     /**
      * @type {import("openai").CreateChatCompletionRequest['messages']}
@@ -103,7 +114,7 @@ async function gptTestFix({ signal, entryOptions }) {
     ];
 
     //  Get the suggested response from OpenAI
-    spinner.start("Generating suggested response...");
+    spinner.start(chalk.blue("Getting suggested response..."));
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -120,15 +131,25 @@ async function gptTestFix({ signal, entryOptions }) {
 
     // @ts-ignore
     const fileChanges = response.choices[0].message?.content.trim() ?? "";
-    console.log("Suggested Response\n\n");
-    console.log(fileChanges);
+    message("Suggested Response");
+    console.log("\n");
+
+    // Diff
+    const diff = diffChars(file, fileChanges);
+    diff.forEach((part) => {
+      // green for additions, red for deletions
+      // grey for common parts
+      const color = part.added ? "green" : part.removed ? "red" : "grey";
+      process.stderr.write(chalk[color](part.value));
+    });
+    console.log("\n");
 
     //  Ask the user if they want to apply the changes
     const { applyChanges } = await inquirer.prompt([
       {
         type: "confirm",
         name: "applyChanges",
-        message: "Apply the suggested changes?",
+        message: chalk.blue("Apply the suggested changes?"),
       },
     ]);
 
@@ -142,7 +163,7 @@ async function gptTestFix({ signal, entryOptions }) {
       {
         type: "confirm",
         name: "runTestsAgain",
-        message: "Run the tests again?",
+        message: chalk.blue("Run the tests again?"),
       },
     ]);
 
@@ -152,7 +173,7 @@ async function gptTestFix({ signal, entryOptions }) {
   }
 
   if (watchFiles) {
-    console.log("Watching for changes...");
+    notify("Watching for changes...");
   }
 }
 
@@ -162,7 +183,7 @@ async function gptTestFix({ signal, entryOptions }) {
  * @returns {never}
  */
 function errorAndExit(message) {
-  console.error(message);
+  error(message);
   process.exit(1);
 }
 
@@ -176,12 +197,13 @@ function setupWatcher(watchFiles, options) {
     watcher.close();
   }
 
-  console.log(`Watching for changes...`);
+  notify(`Watching for changes...`);
 
   watcher = watch(watchFiles);
 
   watcher.on("change", async () => {
-    console.log("File change detected, re-running tests...");
+    console.log("\n");
+    notify("File change detected...");
 
     if (abortController) {
       abortController.abort();
@@ -230,7 +252,30 @@ export async function entry(entryOptions) {
       });
     }
   } catch (error) {
-    console.error("Error:", error.message);
+    error("Error:", error.message);
     process.exit(1);
   }
+}
+
+function message(text) {
+  return console.log(chalk.bgBlueBright.black(whitespaceToLength(text)));
+}
+
+function notify(text) {
+  return console.log(chalk.bgYellow.black(whitespaceToLength(text)));
+}
+
+function error(text) {
+  return console.error(text);
+}
+
+function success(text) {
+  return console.log(chalk.bgGreen.black(whitespaceToLength(text)));
+}
+
+function whitespaceToLength(text, length = 36) {
+  const leftWhitespace = " ".repeat(Math.floor((length - text.length) / 2));
+  const rightWhitespace = " ".repeat(Math.ceil((length - text.length) / 2));
+
+  return `${leftWhitespace}${text}${rightWhitespace}`;
 }

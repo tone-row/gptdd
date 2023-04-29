@@ -4,12 +4,21 @@ dependencies:
   abort-controller:
     specifier: ^3.0.0
     version: 3.0.0
+  chalk:
+    specifier: ^5.2.0
+    version: 5.2.0
   chokidar:
     specifier: ^3.5.3
     version: 3.5.3
+  colors:
+    specifier: ^1.4.0
+    version: 1.4.0
   commander:
     specifier: ^10.0.1
     version: 10.0.1
+  diff:
+    specifier: ^5.1.0
+    version: 5.1.0
   inquirer:
     specifier: ^9.2.0
     version: 9.2.0
@@ -24,6 +33,9 @@ dependencies:
     version: 6.3.0
 
 devDependencies:
+  '@types/colors':
+    specifier: ^1.2.1
+    version: 1.2.1
   '@types/inquirer':
     specifier: ^9.0.3
     version: 9.0.3
@@ -258,6 +270,13 @@ packages:
 
   /@types/chai@4.3.4:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
+    dev: true
+
+  /@types/colors@1.2.1:
+    resolution: {integrity: sha512-7jNkpfN2lVO07nJ1RWzyMnNhH/I5N9iWuMPx9pedptxJ4MODf8rRV0lbJi6RakQ4sKQk231Fw4e2W9n3D7gZ3w==}
+    deprecated: This is a stub types definition. colors provides its own type definitions, so you don't need this installed.
+    dependencies:
+      colors: 1.4.0
     dev: true
 
   /@types/inquirer@9.0.3:
@@ -503,6 +522,10 @@ packages:
     engines: {node: '>=0.8'}
     dev: false
 
+  /colors@1.4.0:
+    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
+    engines: {node: '>=0.1.90'}
+
   /combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
@@ -586,6 +609,11 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
     dev: true
+
+  /diff@5.1.0:
+    resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
+    engines: {node: '>=0.3.1'}
+    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
