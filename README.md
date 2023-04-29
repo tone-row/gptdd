@@ -12,18 +12,18 @@ Given command which runs a test and a file to edit , `gptdd` feeds the test resu
 
 ```bash
 npx gptdd \
-  --testToRun "pnpm vitest run examples/myFunc.test.ts" \
-  --fileToFix "examples/myFunc.ts" \
+  --fileToFix lib/myFunc.ts \
+  --testToRun "pnpm vitest run lib/myFunc.test.ts" \
   --apiKey "sk-..." \
-  --watchFiles "examples/myFunc*"
+  --watchFiles "lib/myFunc*"
 ```
 
 ## CLI Options
 
 | Option             | Description                                                         |
 | ------------------ | ------------------------------------------------------------------- |
-| `--testToRun, -t`  | The command to run once to get the initial test results. (required) |
 | `--fileToFix, -f`  | The file to edit. (required)                                        |
+| `--testToRun, -t`  | The command to run once to get the initial test results. (required) |
 | `--apiKey, -a`     | Your OpenAI API key. (required)                                     |
 | `--watchFiles, -w` | A glob of files to watch. Usually the code and test file.           |
 
@@ -35,18 +35,20 @@ The following examples specific to your language/test-runner. If you don't see w
 
 ```bash
 npx gptdd \
-  --testToRun "vitest run examples/myFunc.test.ts" \
-  --fileToFix "examples/myFunc.ts" \
-  --apiKey sk-555555"
+  --f lib/myFunc.ts \
+  --t "pnpm vitest run lib/myFunc.test.ts" \
+  --a "sk-..." \
+  --w "lib/myFunc*"
 ```
 
 #### Javascript - Jest
 
 ```bash
 npx gptdd \
-  --testToRun "jest examples/myFunc.test.ts" \
-  --fileToFix "examples/myFunc.ts" \
-  --apiKey sk-555555"
+  --f lib/myFunc.ts \
+  --t "pnpm jest examples/myFunc.test.ts" \
+  --a "sk-..." \
+  --w "lib/myFunc*"
 ```
 
 ## Development
