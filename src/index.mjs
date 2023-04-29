@@ -40,28 +40,12 @@ const spinner = ora({
 async function gptTestFix({ signal, entryOptions }) {
   const { testToRun, fileToFix, apiKey, watchFiles = "" } = entryOptions;
 
-  // 1.  Ensure required options are provided
+  //   Ensure required options are provided
   if (!testToRun) errorAndExit("--testToRun is required");
   if (!fileToFix) errorAndExit("--fileToFix is required");
   if (!apiKey) errorAndExit("--apiKey is required");
 
-  // 2. Ensure watchFiles, if provided, resolve to real files
-  if (watchFiles) {
-    watcher = watch(watchFiles);
-    watcher.on("ready", () => {
-      const folders = Object.keys(watcher.getWatched());
-      if (!folders.length) {
-        errorAndExit(
-          `No files matched the watchFiles glob: ${watchFiles}\n\n` +
-            `Make sure to use quotes around the glob to prevent shell expansion.`
-        );
-      } else {
-        watcher.close();
-      }
-    });
-  }
-
-  // 3. Ensure fileToFix exists and get content
+  // Ensure fileToFix exists and get content
   const fileToFixPath = join(process.cwd(), fileToFix);
   const fileExists = await asyncExec(`ls ${fileToFixPath}`);
   if (!fileExists) throw new Error("file does not exist");
@@ -72,13 +56,13 @@ async function gptTestFix({ signal, entryOptions }) {
   if (file.split("\n").length > 10) console.log("...\n");
 
   try {
-    // 4. Run the test command
+    //  Run the test command
     spinner.start(`Running command: ${testToRun}`);
     await asyncExec(testToRun).finally(() => spinner.stop());
 
     console.log("All tests passed!");
   } catch (e) {
-    // 5. If you can't recover from the error, throw it
+    //  If you can't recover from the error, throw it
     if (!e) throw new Error("Unknown Error");
     if (typeof e !== "object") throw e;
     if (!("stderr" in e)) {
@@ -90,7 +74,7 @@ async function gptTestFix({ signal, entryOptions }) {
       process.exit(1);
     }
 
-    // 6. Get the error message
+    //  Get the error message
     const { stderr } = e;
 
     /* We need to catch errors which aren't the result of the test failing
@@ -118,7 +102,7 @@ async function gptTestFix({ signal, entryOptions }) {
       },
     ];
 
-    // 7. Get the suggested response from OpenAI
+    //  Get the suggested response from OpenAI
     spinner.start("Generating suggested response...");
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -139,7 +123,7 @@ async function gptTestFix({ signal, entryOptions }) {
     console.log("Suggested Response\n\n");
     console.log(fileChanges);
 
-    // 8. Ask the user if they want to apply the changes
+    //  Ask the user if they want to apply the changes
     const { applyChanges } = await inquirer.prompt([
       {
         type: "confirm",
@@ -152,7 +136,7 @@ async function gptTestFix({ signal, entryOptions }) {
       writeFileSync(fileToFixPath, fileChanges);
     }
 
-    // 9. Ask the user if they want to run the tests again
+    //  Ask the user if they want to run the tests again
     // Useful for confirming the changes fixed the test
     const { runTestsAgain } = await inquirer.prompt([
       {
@@ -167,11 +151,8 @@ async function gptTestFix({ signal, entryOptions }) {
     }
   }
 
-  // 10. If watchFiles is provided, setup the watcher
   if (watchFiles) {
-    setupWatcher(watchFiles, { entryOptions, signal });
-  } else {
-    process.exit(0);
+    console.log("Watching for changes...");
   }
 }
 
@@ -197,9 +178,7 @@ function setupWatcher(watchFiles, options) {
 
   console.log(`Watching for changes...`);
 
-  watcher = watch(watchFiles, {
-    ignoreInitial: true,
-  });
+  watcher = watch(watchFiles);
 
   watcher.on("change", async () => {
     console.log("File change detected, re-running tests...");
@@ -218,6 +197,9 @@ function setupWatcher(watchFiles, options) {
       }
     }
   });
+
+  // Run once, when the watcher is setup
+  gptTestFix(options);
 }
 
 /**
@@ -234,10 +216,19 @@ function setupWatcher(watchFiles, options) {
 export async function entry(entryOptions) {
   try {
     abortController = new AbortController();
-    await gptTestFix({
-      entryOptions,
-      signal: abortController.signal,
-    });
+
+    // setup the watcher if watchFiles is provided
+    if (entryOptions.watchFiles) {
+      setupWatcher(entryOptions.watchFiles, {
+        entryOptions,
+        signal: abortController.signal,
+      });
+    } else {
+      await gptTestFix({
+        entryOptions,
+        signal: abortController.signal,
+      });
+    }
   } catch (error) {
     console.error("Error:", error.message);
     process.exit(1);
