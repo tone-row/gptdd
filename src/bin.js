@@ -1,5 +1,5 @@
 import { program } from "commander";
-import { entry } from "./index.mjs";
+import { gptTestFix } from "./index.mjs";
 
 program
   .description("A CLI tool to fix failing tests using OpenAI GPT.")
@@ -10,13 +10,9 @@ program
   )
   .option("-f, --fileToFix <file>", "The file to edit.")
   .option("-a, --apiKey <key>", "Your OpenAI API key.")
-  .option(
-    "-w, --watchFiles <string>",
-    "A glob of files to watch. Usually the code and test file."
-  )
   .action(async (options) => {
     try {
-      await entry(options);
+      await gptTestFix(options);
     } catch (error) {
       console.error("Error:", error.message);
       process.exit(1);

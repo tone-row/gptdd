@@ -8,24 +8,24 @@ Given command which runs a test and a file to edit , `gptdd` feeds the test resu
 
 > 💭 It would be amazing to build this in at the test runner/IDE-level, but in the interest of it being language and test-runner agnostic, it's a standalone script. If you're interested in building an IDE plugin, please reach out!
 
+![gptdd demo fast](https://user-images.githubusercontent.com/159949/235314387-8b5b5a10-e0b3-4863-a08c-fdfeb80878f7.gif)
+
 ## Usage
 
 ```bash
 npx gptdd \
   --fileToFix lib/myFunc.ts \
   --testToRun "pnpm vitest run lib/myFunc.test.ts" \
-  --apiKey "sk-..." \
-  --watchFiles "lib/myFunc*"
+  --apiKey "sk-..."
 ```
 
 ## CLI Options
 
-| Option             | Description                                                         |
-| ------------------ | ------------------------------------------------------------------- |
-| `--fileToFix, -f`  | The file to edit. (required)                                        |
-| `--testToRun, -t`  | The command to run once to get the initial test results. (required) |
-| `--apiKey, -a`     | Your OpenAI API key. (required)                                     |
-| `--watchFiles, -w` | A glob of files to watch. Usually the code and test file.           |
+| Option            | Description                                              |
+| ----------------- | -------------------------------------------------------- |
+| `--fileToFix, -f` | The file to edit.                                        |
+| `--testToRun, -t` | The command to run once to get the initial test results. |
+| `--apiKey, -a`    | Your OpenAI API key.                                     |
 
 ### Specific Examples
 
@@ -37,8 +37,7 @@ The following examples specific to your language/test-runner. If you don't see w
 npx gptdd \
   --f lib/myFunc.ts \
   --t "pnpm vitest run lib/myFunc.test.ts" \
-  --a "sk-..." \
-  --w "lib/myFunc*"
+  --a "sk-..."
 ```
 
 #### Javascript - Jest
@@ -47,8 +46,7 @@ npx gptdd \
 npx gptdd \
   --f lib/myFunc.ts \
   --t "pnpm jest examples/myFunc.test.ts" \
-  --a "sk-..." \
-  --w "lib/myFunc*"
+  --a "sk-..."
 ```
 
 ## Development
