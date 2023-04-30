@@ -35,18 +35,18 @@ The following examples specific to your language/test-runner. If you don't see w
 
 ```bash
 npx gptdd \
-  --f lib/myFunc.ts \
-  --t "pnpm vitest run lib/myFunc.test.ts" \
-  --a "sk-..."
+  -f lib/myFunc.ts \
+  -t "pnpm vitest run lib/myFunc.test.ts" \
+  -a "sk-..."
 ```
 
 #### Javascript - Jest
 
 ```bash
 npx gptdd \
-  --f lib/myFunc.ts \
-  --t "pnpm jest examples/myFunc.test.ts" \
-  --a "sk-..."
+  -f lib/myFunc.ts \
+  -t "pnpm jest examples/myFunc.test.ts" \
+  -a "sk-..."
 ```
 
 ## Development
